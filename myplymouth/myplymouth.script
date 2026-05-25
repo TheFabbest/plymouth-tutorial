@@ -2,7 +2,7 @@
 
 # some common global constants
 PAD_Y = Window.GetHeight() / 10;
-PAD_X = 10;
+PAD_X = 20;
 NORMAL = 0;
 PASSWORD = 1;
 
