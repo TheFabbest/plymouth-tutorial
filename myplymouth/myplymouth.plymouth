@@ -1,0 +1,12 @@
+[Plymouth Theme]
+Name=myplymouth
+Description=A simple Plymouth theme that shows text on the screen.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/myplymouth/images
+ScriptFile=/usr/share/plymouth/themes/myplymouth/myplymouth.script
+
+[script-env-vars]
+textt=Fab is the best!
+
