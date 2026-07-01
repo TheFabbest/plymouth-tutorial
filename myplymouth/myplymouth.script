@@ -1,4 +1,13 @@
-# This is a simple Plymouth script that demonstrates how to use the various callback functions provided by the Plymouth API.
+# ==========================================
+# Theme Name: API Callback Functions Template
+# Description: Demonstrates how to use the various callback functions provided by the Plymouth API.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: Yes
+# - Progress Display: Yes
+# ========================================== 
 
 # some common global constants
 PAD_Y = Window.GetHeight() / 10;
@@ -10,7 +19,8 @@ PASSWORD = 1;
 theme_state = NORMAL;
 
 # set a background color gradient
-Window.SetBackgroundColor(0,0,0);
+Window.SetBackgroundTopColor(1,1,1);
+Window.SetBackgroundBottomColor(0,0,0);
 
 
 # ------------------------- Refresh Callback --------------------------------

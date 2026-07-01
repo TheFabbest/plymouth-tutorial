@@ -1,0 +1,23 @@
+# ==========================================
+# Theme Name: Fullscreen Image Template
+# Description: Displays a single fullscreen image.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# ========================================== 
+
+# load image
+img = Image("image.png");
+
+# scale image
+W = Window.GetWidth();
+H = Window.GetHeight();
+scaled_img = img.Scale(W, H);
+
+# create sprite and set image
+sprite = Sprite();
+sprite.SetImage(scaled_img);
+sprite.SetPosition(0, 0, 1);

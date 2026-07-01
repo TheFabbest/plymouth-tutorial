@@ -1,10 +1,10 @@
 #!/usr/bin/fish
 
 # Copy theme to the correct system directory
-sudo cp -r myplymouth /usr/share/plymouth/themes/
+sudo cp -r centeredimage /usr/share/plymouth/themes/
 
 # Set it as the active theme
-sudo plymouth-set-default-theme myplymouth
+sudo plymouth-set-default-theme centeredimage
 
 # Test it (no initramfs rebuild needed for just previewing)
 sudo plymouthd --no-daemon --debug &

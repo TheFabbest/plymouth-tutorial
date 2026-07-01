@@ -1,0 +1,28 @@
+# ==========================================
+# Theme Name: Centered Image Template
+# Description: Displays a single, centered image on a solid background.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# ========================================== 
+
+R = 1;
+G = 0.9;
+B = 0;
+
+# set a background color
+Window.SetBackgroundTopColor(R,G,B);
+Window.SetBackgroundBottomColor(R,G,B);
+
+# load image
+img = Image("image.png");
+sprite = Sprite();
+sprite.SetImage(img);
+
+x = (Window.GetWidth() - img.GetWidth()) / 2;
+y = (Window.GetHeight() - img.GetHeight()) / 2;
+
+sprite.SetPosition(x, y, 1);
