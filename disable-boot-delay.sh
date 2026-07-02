@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Ensure the script is run as root
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run this script as root (using sudo)."
+  exit 1
+fi
+
+SERVICE_FILE="/etc/systemd/system/plymouth-wait-for-animation.service"
+
+if [ -f "$SERVICE_FILE" ]; then
+  echo "Disabling plymouth-wait-for-animation.service..."
+  systemctl disable plymouth-wait-for-animation.service
+  
+  echo "Removing service file..."
+  rm "$SERVICE_FILE"
+  
+  echo "Reloading systemd daemon..."
+  systemctl daemon-reload
+  
+  echo "Success! The boot delay has been removed."
+else
+  echo "The custom boot delay service file does not exist. Nothing to remove."
+fi

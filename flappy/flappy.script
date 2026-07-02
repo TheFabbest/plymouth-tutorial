@@ -11,11 +11,16 @@ distance_between_tubes = 800;
 tube_gap = 450;
 tube_speed = 500;
 
+# game
+score = 0;
+game_over = 0;
+
 # images
 bird_sprite = Sprite();
 bird_image = Image("bird.png");
 tube_upper_image = Image("tube_upper.png");
 tube_lower_image = Image("tube_lower.png");
+tube_width = tube_upper_image.GetWidth();
 
 # debug
 debug_sprite = Sprite();
@@ -26,11 +31,35 @@ fun write(text)
   debug_sprite.SetImage(text_image);
 }
 
+# intersection
+fun intersects(circle_x, circle_y, circle_r, rect_x, rect_y, rect_width, rect_height)
+{
+    # Find the closest point on the rectangle to the circle's center
+    # Clamp circle_x between rect_x (left) and rect_x + rect_width (right)
+    closestX = circle_x;
+    if (closestX < rect_x) { closestX = rect_x; }
+    else if (closestX > (rect_x + rect_width)) { closestX = rect_x + rect_width; }
+
+    # Clamp circle_y between rect_y (top) and rect_y + rect_height (bottom)
+    closestY = circle_y;
+    if (closestY < rect_y) { closestY = rect_y; }
+    else if (closestY > (rect_y + rect_height)) { closestY = rect_y + rect_height; }
+
+    # Calculate the distance from closest point to circle center
+    distanceX = circle_x - closestX;
+    distanceY = circle_y - closestY;
+
+    # If the distance is less than the circle's radius, an intersection occurs
+    distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+    return (distanceSquared < (circle_r * circle_r));
+}
+
 # bird
 bird = [];
 bird.x = 100;
 bird.y = 400;
 bird.speed = 0;
+bird_radius = bird_sprite_size / 2;
 bird.update = fun (dt)
 {
   bird_sprite.SetImage(bird_image.Scale(bird_sprite_size, bird_sprite_size - bird_compression_max*(bird.speed/speed_after_space)));
@@ -50,6 +79,8 @@ bird.update = fun (dt)
 };
 
 # tubes
+upper_tube_height = tube_upper_image.GetHeight();
+lower_tube_height = tube_lower_image.GetHeight();
 tubes = [];
 total_tubes = Math.Int(Window.GetWidth() / distance_between_tubes) + 2;
 logic_w = total_tubes * distance_between_tubes;
@@ -67,15 +98,32 @@ while (current_tube < total_tubes)
 
   tube.update = fun (dt)
   {
-    write(dt);
     this.x = this.x - tube_speed * dt;
     if (this.x < -distance_between_tubes)
     {
       this.x = logic_w - distance_between_tubes;
       this.y = Math.Random() * (Window.GetHeight() - tube_gap);
+      score += 1;
+
+      # write score
+      write("Score: " + score);
     }
-    this.tube_upper.SetPosition(this.x, this.y - tube_upper_image.GetHeight());
-    this.tube_lower.SetPosition(this.x, this.y + tube_gap);
+    this.tube_upper.SetPosition(this.x, this.y - upper_tube_height, 1);
+    this.tube_lower.SetPosition(this.x, this.y + tube_gap, 1);
+    
+    # collision detection
+    bird_center_x = bird.x + bird_radius;
+    bird_center_y = bird.y + bird_radius;
+    upper_ty = this.y - upper_tube_height;
+    lower_ty = this.y + tube_gap;
+    if (intersects(bird_center_x, bird_center_y, bird_radius, this.x, upper_ty, tube_width, upper_tube_height) ||
+        intersects(bird_center_x, bird_center_y, bird_radius, this.x, lower_ty, tube_width, lower_tube_height))
+    {
+      Window.SetBackgroundTopColor(1, 0, 0);
+      Window.SetBackgroundBottomColor(1, 0, 0);
+      write("GAME OVER\nScore: " + score);
+      game_over = 1;
+    }
   };
   tubes[current_tube] = tube;
   current_tube += 1;
@@ -97,21 +145,26 @@ Plymouth.SetKeyboardInputFunction(inkey_callback);
 last_duration = 0;
 fun progress_callback (duration, progress)
 {
-  if (duration < 2)
+  # do nothing if game over
+  if (game_over == 1)
   {
-    last_duration = duration;
     return;
   }
-  
-  dt = duration - last_duration;
 
+  # get delta time
+  dt = duration - last_duration;
+  if (dt > 0.1)
+  {
+    dt = 0.1;
+  }
+
+  # update bird
   bird.update(dt);
 
-  current_tube = 0;
-  while (current_tube < total_tubes)
+  # update tubes and check for collisions
+  for (current_tube = 0; current_tube < total_tubes; current_tube += 1)
   {
     tubes[current_tube].update(dt);
-    current_tube += 1;
   }
   last_duration = duration;
 }
