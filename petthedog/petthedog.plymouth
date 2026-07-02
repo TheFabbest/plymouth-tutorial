@@ -1,6 +1,6 @@
 [Plymouth Theme]
 Name=PetTheDog
-Description=Pet the Dog
+Description=Press any key to pet the dog
 ModuleName=script
 
 [script]

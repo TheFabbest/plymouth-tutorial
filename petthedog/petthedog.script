@@ -1,6 +1,3 @@
-Window.SetBackgroundTopColor(0, 0, 0);
-Window.SetBackgroundBottomColor(0, 0, 0);
-
 pet_count = 0;
 
 dog_sprite = Sprite();
@@ -17,26 +14,24 @@ dog_sprite.SetImage(images[0]);
 
 # debug
 debug_sprite = Sprite();
-debug_sprite.SetPosition(100, 100, 1000);
 fun write(text)
 {
-  text_image = Image.Text(text, 1, 1, 1);
+  text_image = Image.Text(text, 1, 1, 1, 1, "Sans 40");
   debug_sprite.SetImage(text_image);
+  debug_sprite.SetPosition((Window.GetWidth() - text_image.GetWidth()) / 2, Window.GetHeight() - 150, 10000);
 }
 
 fun pet() {
     pet_count++;
-    current_frame = 0;
+    current_frame = 1;
 }
 
-last_pet_count = 0;
 fun update() {
-  if (pet_count > last_pet_count) {
+  if (current_frame > 0) {
     current_frame = (current_frame + 1);
 
     if (current_frame == 13) {
       current_frame = 0;
-      last_pet_count = pet_count;
     }
   }
   dog_sprite.SetImage(images[current_frame]);
