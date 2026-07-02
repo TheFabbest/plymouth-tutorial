@@ -1,0 +1,56 @@
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+pet_count = 0;
+
+dog_sprite = Sprite();
+
+images = [];
+num_of_frames = 13;
+for (i = 1; i <= num_of_frames; i++) {
+    images[i-1] = Image(i + ".png");
+}
+
+current_frame = 0;
+dog_sprite.SetPosition((Window.GetWidth() - images[0].GetWidth()) / 2, (Window.GetHeight() - images[0].GetHeight()) / 2, 1000);
+dog_sprite.SetImage(images[0]);
+
+# debug
+debug_sprite = Sprite();
+debug_sprite.SetPosition(100, 100, 1000);
+fun write(text)
+{
+  text_image = Image.Text(text, 1, 1, 1);
+  debug_sprite.SetImage(text_image);
+}
+
+fun pet() {
+    pet_count++;
+    current_frame = 0;
+}
+
+last_pet_count = 0;
+fun update() {
+  if (pet_count > last_pet_count) {
+    current_frame = (current_frame + 1);
+
+    if (current_frame == 13) {
+      current_frame = 0;
+      last_pet_count = pet_count;
+    }
+  }
+  dog_sprite.SetImage(images[current_frame]);
+}
+
+fun keyboard_callback(){
+  pet();
+}
+
+Plymouth.SetKeyboardInputFunction(keyboard_callback);
+
+fun refresh_callback() {
+  write("Pet count: " + pet_count);
+  update();
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

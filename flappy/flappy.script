@@ -1,5 +1,5 @@
 # background
-Window.SetBackgroundTopColor(0.2, 0.94, 0.94);
+Window.SetBackgroundTopColor(0, 0.9, 0.9);
 Window.SetBackgroundBottomColor(0, 0.9, 0.9);
 
 # constants
@@ -10,6 +10,8 @@ bird_sprite_size = 128;
 distance_between_tubes = 800;
 tube_gap = 450;
 tube_speed = 500;
+window_width = Window.GetWidth();
+window_height = Window.GetHeight();
 
 # game
 score = 0;
@@ -18,9 +20,11 @@ game_over = 0;
 # images
 bird_sprite = Sprite();
 bird_image = Image("bird.png");
-tube_upper_image = Image("tube_upper.png");
-tube_lower_image = Image("tube_lower.png");
-tube_width = tube_upper_image.GetWidth();
+tube_upper_image_unscaled = Image("tube_upper.png");
+tube_lower_image_unscaled = Image("tube_lower.png");
+tube_width = tube_upper_image_unscaled.GetWidth();
+tube_upper_image = tube_upper_image_unscaled.Scale(tube_width, window_height - tube_gap);
+tube_lower_image = tube_lower_image_unscaled.Scale(tube_width, window_height - tube_gap);
 
 # debug
 debug_sprite = Sprite();
@@ -70,9 +74,9 @@ bird.update = fun (dt)
     bird.y = 0;
     bird.speed = 0;
   }
-  else if (bird.y > Window.GetHeight())
+  else if (bird.y > window_height)
   {
-    bird.y = Window.GetHeight();
+    bird.y = window_height;
     bird.speed = 0;
   }
   bird_sprite.SetPosition(bird.x, bird.y);
@@ -82,15 +86,14 @@ bird.update = fun (dt)
 upper_tube_height = tube_upper_image.GetHeight();
 lower_tube_height = tube_lower_image.GetHeight();
 tubes = [];
-total_tubes = Math.Int(Window.GetWidth() / distance_between_tubes) + 2;
+total_tubes = Math.Int(window_width / distance_between_tubes) + 1;
 logic_w = total_tubes * distance_between_tubes;
-current_tube = 0;
 initial_padding = 900;
-while (current_tube < total_tubes)
+for (current_tube = 0; current_tube < total_tubes; current_tube += 1)
 {
   tube = [];
   tube.x = distance_between_tubes * current_tube + initial_padding;
-  tube.y = Math.Random() * (Window.GetHeight() - tube_gap);
+  tube.y = Math.Random() * (window_height - tube_gap);
   tube.tube_upper = Sprite();
   tube.tube_lower = Sprite();
   tube.tube_upper.SetImage(tube_upper_image);
@@ -99,10 +102,10 @@ while (current_tube < total_tubes)
   tube.update = fun (dt)
   {
     this.x = this.x - tube_speed * dt;
-    if (this.x < -distance_between_tubes)
+    if (this.x < -tube_width)
     {
-      this.x = logic_w - distance_between_tubes;
-      this.y = Math.Random() * (Window.GetHeight() - tube_gap);
+      this.x += logic_w;
+      this.y = Math.Random() * (window_height - tube_gap);
       score += 1;
 
       # write score
@@ -126,7 +129,6 @@ while (current_tube < total_tubes)
     }
   };
   tubes[current_tube] = tube;
-  current_tube += 1;
   tube_spawn_point += distance_between_tubes;
 }
 
@@ -140,7 +142,6 @@ fun inkey_callback (key)
 }
 
 Plymouth.SetKeyboardInputFunction(inkey_callback);
-
 
 last_duration = 0;
 fun progress_callback (duration, progress)
