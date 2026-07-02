@@ -1,33 +1,38 @@
 
 # set a background color gradient
-Window.SetBackgroundTopColor();
-Window.SetBackgroundBottomColor(1,1,1);
+Window.SetBackgroundTopColor(0,0,0);
+Window.SetBackgroundBottomColor(0,0,0);
 
 
 # ------------------------- Refresh Callback --------------------------------
 
 # 1. PRE-ALLOCATION: Load images once during startup
-MAX_FRAME = 82;
+MAX_FRAME = 11;
 frames = [];
+position_x = [];
+position_y = [];
+window_width = Window.GetWidth();
+window_height = Window.GetHeight();
 i = 0;
 while (i < MAX_FRAME) {
-    loaded = Image("efbec43e-959e-4386-bc01-e01be9ce335b-" + i + ".png");
-    frames[i] = loaded.Scale(128, 128);
+    loaded = Image("frame" + i + ".png");
+    frames[i] = loaded.Scale(loaded.GetWidth() * 4, loaded.GetHeight() * 4);
+
+    w = frames[i].GetWidth();
+    h = frames[i].GetHeight();
+    position_x[i] = (window_width - w) / 2;
+    position_y[i] = (window_height - h) / 2;
+    
     i = i + 1;
 }
 
 # 2. SPRITE SETUP
 shown = Sprite(); # Set initial image
-w = frames[0].GetWidth();
-h = frames[0].GetHeight();
-x = (Window.GetWidth() - w) / 2;
-y = (Window.GetHeight() - h) / 2;
-shown.SetPosition(x, y, 1);
 
 # 3. ANIMATION LOGIC: Use a counter to slow down the animation
 frame = 0;
 timer = 0;
-SPEED = 2; # Change this to control how fast it animates
+SPEED = 8; # Change this to control how fast it animates
 
 fun refresh_callback()
 {
@@ -36,6 +41,7 @@ fun refresh_callback()
         frame = (frame + 1) % MAX_FRAME;
         
         shown.SetImage(frames[frame]);
+        shown.SetPosition(position_x[frame], position_y[frame], 1);
         
         timer = 0;
     }

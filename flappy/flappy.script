@@ -1,0 +1,119 @@
+# background
+Window.SetBackgroundTopColor(0.2, 0.94, 0.94);
+Window.SetBackgroundBottomColor(0, 0.9, 0.9);
+
+# constants
+acceleration = -2000;
+speed_after_space = 1000;
+bird_compression_max = 20;
+bird_sprite_size = 128;
+distance_between_tubes = 800;
+tube_gap = 450;
+tube_speed = 500;
+
+# images
+bird_sprite = Sprite();
+bird_image = Image("bird.png");
+tube_upper_image = Image("tube_upper.png");
+tube_lower_image = Image("tube_lower.png");
+
+# debug
+debug_sprite = Sprite();
+debug_sprite.SetPosition(100, 100, 1000);
+fun write(text)
+{
+  text_image = Image.Text(text, 0, 0, 0);
+  debug_sprite.SetImage(text_image);
+}
+
+# bird
+bird = [];
+bird.x = 100;
+bird.y = 400;
+bird.speed = 0;
+bird.update = fun (dt)
+{
+  bird_sprite.SetImage(bird_image.Scale(bird_sprite_size, bird_sprite_size - bird_compression_max*(bird.speed/speed_after_space)));
+  bird.speed = bird.speed + acceleration * dt;
+  bird.y = bird.y - bird.speed * dt;
+  if (bird.y < 0)
+  {
+    bird.y = 0;
+    bird.speed = 0;
+  }
+  else if (bird.y > Window.GetHeight())
+  {
+    bird.y = Window.GetHeight();
+    bird.speed = 0;
+  }
+  bird_sprite.SetPosition(bird.x, bird.y);
+};
+
+# tubes
+tubes = [];
+total_tubes = Math.Int(Window.GetWidth() / distance_between_tubes) + 2;
+logic_w = total_tubes * distance_between_tubes;
+current_tube = 0;
+initial_padding = 900;
+while (current_tube < total_tubes)
+{
+  tube = [];
+  tube.x = distance_between_tubes * current_tube + initial_padding;
+  tube.y = Math.Random() * (Window.GetHeight() - tube_gap);
+  tube.tube_upper = Sprite();
+  tube.tube_lower = Sprite();
+  tube.tube_upper.SetImage(tube_upper_image);
+  tube.tube_lower.SetImage(tube_lower_image);
+
+  tube.update = fun (dt)
+  {
+    write(dt);
+    this.x = this.x - tube_speed * dt;
+    if (this.x < -distance_between_tubes)
+    {
+      this.x = logic_w - distance_between_tubes;
+      this.y = Math.Random() * (Window.GetHeight() - tube_gap);
+    }
+    this.tube_upper.SetPosition(this.x, this.y - tube_upper_image.GetHeight());
+    this.tube_lower.SetPosition(this.x, this.y + tube_gap);
+  };
+  tubes[current_tube] = tube;
+  current_tube += 1;
+  tube_spawn_point += distance_between_tubes;
+}
+
+# keyboard input
+fun inkey_callback (key)
+{
+  if (key == " ")
+  {
+    bird.speed = speed_after_space;
+  }
+}
+
+Plymouth.SetKeyboardInputFunction(inkey_callback);
+
+
+last_duration = 0;
+fun progress_callback (duration, progress)
+{
+  if (duration < 2)
+  {
+    last_duration = duration;
+    return;
+  }
+  
+  dt = duration - last_duration;
+
+  bird.update(dt);
+
+  current_tube = 0;
+  while (current_tube < total_tubes)
+  {
+    tubes[current_tube].update(dt);
+    current_tube += 1;
+  }
+  last_duration = duration;
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);

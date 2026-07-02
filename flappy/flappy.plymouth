@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=FlappyBird
+Description=The "Flappy Bird" game
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/flappy/images
+ScriptFile=/usr/share/plymouth/themes/flappy/flappy.script
