@@ -6,7 +6,7 @@ Window.SetBackgroundBottomColor(0, 0.9, 0.9);
 acceleration = -2000;
 speed_after_space = 1000;
 bird_compression_max = 20;
-bird_sprite_size = 128;
+bird_sprite_size = 96;
 distance_between_tubes = 800;
 tube_gap = 450;
 tube_speed = 500;
