@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Pac-man
+Description=Let pac-man do the loading for you.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/pacman/images
+ScriptFile=/usr/share/plymouth/themes/pacman/pacman.script
