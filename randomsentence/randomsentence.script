@@ -27,9 +27,11 @@ sentences = [
     "72 times 3?",
     "Get a plant.",
     "I hope this boot screen finds you well.",
-    "Eat better."
+    "Eat better.",
+    "The fastest learners are often the people least afraid of looking dumb.\n@itsmonkiddo",
+    "Go plant a tree!",
 ];
-this_is_line_number = 32;
+this_is_line_number = 34;
 size = this_is_line_number - 3;
 index = Math.Int(Math.Random() * size);
 sentence = sentences[index];
