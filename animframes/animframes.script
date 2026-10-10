@@ -32,7 +32,7 @@ shown = Sprite(); # Set initial image
 # 3. ANIMATION LOGIC: Use a counter to slow down the animation
 frame = 0;
 timer = 0;
-SPEED = 8; # Change this to control how fast it animates
+SPEED = 10; # Change this to control how fast it animates
 
 fun refresh_callback()
 {

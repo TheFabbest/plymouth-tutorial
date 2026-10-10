@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=loading-animation
+Description=Plymouth theme that displays an animated loading screen that ends when the system is ready to use.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/loading-animation/images
+ScriptFile=/usr/share/plymouth/themes/loading-animation/loading-animation.script
