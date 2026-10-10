@@ -30,9 +30,15 @@ sentences = [
     "Eat better.",
     "The fastest learners are often the people least afraid of looking dumb.\n@itsmonkiddo",
     "Go plant a tree!",
+    "I hope the things you're doing are not evil things.",
+    "Where are the bugs? Are they safe? Are they alright?",
+    "Can you still do pushups?",
+    "I am proud of you.",
+    "Make beautiful things."
 ];
-this_is_line_number = 34;
-size = this_is_line_number - 3;
+
+for (size = 0; sentences[size] != null; size = size + 1){}
+
 index = Math.Int(Math.Random() * size);
 sentence = sentences[index];
 
