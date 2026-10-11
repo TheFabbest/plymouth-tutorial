@@ -1,22 +1,76 @@
-
 # set a background color gradient
-Window.SetBackgroundTopColor(0,0,0.6);
-Window.SetBackgroundBottomColor(0,0,0.6);
+Window.SetBackgroundTopColor(0.051,0.051,0.043);
+Window.SetBackgroundBottomColor(0.051,0.051,0.043);
 
+
+# config
+PACMAN_SIZE = 64;
+NUM_DOTS = 20;
+NUMBER_OF_FRAMES = 3;
+
+# window size
+window_width = Window.GetWidth();
+window_height = Window.GetHeight();
 
 # load pacman images
 pacman_images = [];
-for (i = 0; i < 4; i = i + 1) {
-    pacman_images[i] = Image("pacman" + i + ".png");
+for (i = 0; i < NUMBER_OF_FRAMES; i = i + 1) {
+    pacman_images[i] = Image("pacman" + i + ".png").Scale(PACMAN_SIZE, PACMAN_SIZE);
 }
 pacman_sprite = Sprite(pacman_images[0]);
+pacman_sprite.SetY(Math.Int((window_height - PACMAN_SIZE) / 2));
+pacman_sprite.SetZ(1);
+
+# load dot image
+dot_image = Image("dot.png");
+dot_sprites = [];
+for (i = 0; i < NUM_DOTS; i = i + 1) {
+    dot_sprites[i] = Sprite(dot_image);
+    dot_sprites[i].SetX(Math.Int((i + 1) * window_width / (NUM_DOTS + 1)) - 8);
+    dot_sprites[i].SetY(Math.Int((window_height - 16) / 2));
+}
+
+ping_pong = 1;
+MAX_DELAY = 4;
+frame = 0;
+delay=MAX_DELAY;
+fun update(){
+    # slow down animation
+    if (delay > 0) {
+        delay = delay - 1;
+        return;
+    }
+    delay = MAX_DELAY;
+
+    # update frame
+    frame = frame + ping_pong;
+    if (frame >= NUMBER_OF_FRAMES - 1) {
+        ping_pong = -1;
+    } else if (frame <= 0) {
+        ping_pong = 1;
+    }
+    image = pacman_images[frame];
+    pacman_sprite.SetImage(image);
+}
+
+Plymouth.SetRefreshFunction(update);
 
 # use pacman to show progress
 fun progress_callback(duration, progress)
 {
-    sprite_index = Math.Int(duration*4) % 4;
-    pacman_sprite.SetImage(pacman_images[sprite_index]);
-    pacman_sprite.SetPosition(progress * Window.GetWidth(), Window.GetHeight()/2, 0);
+    current_x = pacman_sprite.GetX();
+    target_x = Math.Min(Math.Int(progress * window_width * 1.1), window_width); # 100% is never actually reached, so we need to overshoot a bit
+
+    interpolated_x = current_x + (target_x - current_x) * 0.5; # we interpolate to make the movement smoother
+
+    # make the dots disappear as pacman eats them
+    for (i = 0; i < NUM_DOTS; i = i + 1) {
+        if (interpolated_x > (i + 1) * window_width / (NUM_DOTS+1) - 8) {
+            dot_sprites[i].SetOpacity(0);
+        }
+    }
+    
+    pacman_sprite.SetX(interpolated_x);
 }
 
 Plymouth.SetBootProgressFunction(progress_callback);

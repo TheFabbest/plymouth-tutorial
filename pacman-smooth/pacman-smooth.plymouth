@@ -1,8 +1,0 @@
-[Plymouth Theme]
-Name=Pac-man
-Description=Let pac-man do the loading for you, displaying the progress bar with a smooth animation instead of showing raw data.
-ModuleName=script
-
-[script]
-ImageDir=/usr/share/plymouth/themes/pacman-smooth/images
-ScriptFile=/usr/share/plymouth/themes/pacman-smooth/pacman-smooth.script

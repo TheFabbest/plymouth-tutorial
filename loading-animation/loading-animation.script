@@ -9,12 +9,13 @@ shown = Sprite();
 first_frame = Image("frame0.png");
 shown.SetImage(first_frame);
 shown.SetPosition(Math.Int((Window.GetWidth() - first_frame.GetWidth()) / 2), Math.Int((Window.GetHeight() - first_frame.GetHeight()) / 2), 1);
-num_of_frames = 83; # hardcoded number of frames in the animation
+last_frame = 83; # hardcoded number of last frame in the animation
 
 
 fun progress_callback (duration, progress)
 {
-  target_frame = Math.Int(progress * num_of_frames);
+  # calculate the target frame based on the progress, overshooting a bit to ensure we reach the last frame
+  target_frame = Math.Min(Math.Int(progress * 1.05 * last_frame), last_frame);
 }
 
 Plymouth.SetBootProgressFunction(progress_callback);
