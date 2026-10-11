@@ -1,3 +1,14 @@
+# ==========================================
+# Theme Name: loading-animation
+# Description: Shows an animated loading animation during boot, of which the progress is dictated by the progress of the boot process.
+# Author: TheFabbest
+# Credits: Original GIF by Badwolf5940 (Creative Commons)
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: Indicates progress by advancing the animation
+# ========================================== 
+
 # set a background color gradient
 Window.SetBackgroundTopColor(0,0,0);
 Window.SetBackgroundBottomColor(0,0,0);

@@ -1,3 +1,14 @@
+# ==========================================
+# Theme Name: randomsentence
+# Description: Displays a random sentence on a solid background.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# ========================================== 
+
 sentences = [
     "Hello World!",
     "My objective function is silliness.",

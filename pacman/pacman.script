@@ -1,3 +1,14 @@
+# ==========================================
+# Theme Name: pacman
+# Description: Displays a pacman eating dots on a solid background.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: Yes (pacman moving across the screen and eating dots)
+# ==========================================
+
 # set a background color gradient
 Window.SetBackgroundTopColor(0.051,0.051,0.043);
 Window.SetBackgroundBottomColor(0.051,0.051,0.043);
