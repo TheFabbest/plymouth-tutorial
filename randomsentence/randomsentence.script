@@ -45,7 +45,9 @@ sentences = [
     "Where are the bugs? Are they safe? Are they alright?",
     "Can you still do pushups?",
     "I am proud of you.",
-    "Make beautiful things."
+    "Make beautiful things.",
+    "Believe it or not, suffering makes everything beautiful.",
+    "Did you remember to smile today?",
 ];
 
 for (size = 0; sentences[size] != null; size = size + 1){}
