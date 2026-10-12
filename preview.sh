@@ -6,7 +6,7 @@
 
 set LOG_FILE /tmp/plymouth-debug.log
 
-set THEME_DIR $argv[1]
+set THEME_DIR ./themes/$argv[1]
 set THEME_NAME (basename $THEME_DIR)
 set THEME_DST /usr/share/plymouth/themes/$THEME_NAME
 

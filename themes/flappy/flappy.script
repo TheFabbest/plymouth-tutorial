@@ -1,3 +1,15 @@
+# ==========================================
+# Theme Name: flappy
+# Description: A simple flappy bird clone for Plymouth
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# - Interactive: Yes (press space to make the bird jump)
+# ========================================== 
+
 # background
 Window.SetBackgroundTopColor(0, 0.9, 0.9);
 Window.SetBackgroundBottomColor(0, 0.9, 0.9);

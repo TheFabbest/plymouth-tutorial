@@ -4,7 +4,7 @@ set THEME_NAME $argv[1]
 set TIME $argv[2]
 
 # Copy theme to the correct system directory
-sudo cp -r $THEME_NAME /usr/share/plymouth/themes/
+sudo cp -r ./themes/$THEME_NAME /usr/share/plymouth/themes/
 
 # Set it as the active theme
 sudo plymouth-set-default-theme $THEME_NAME

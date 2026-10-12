@@ -7,7 +7,7 @@
 # - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
 # - Password Prompt Support: No
 # - Progress Display: No
-# - Interactive: Yes (press any key to pet the dog), requires setup (see enable-key-wait.sh and disable-key-wait.sh)
+# - Interactive: Yes (press any key to pet the dog)
 # ========================================== 
 
 pet_count = 0;
