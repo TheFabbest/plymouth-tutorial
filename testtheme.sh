@@ -1,44 +1,38 @@
 #!/usr/bin/env bash
-# Fast smoke test: show a theme for a fixed number of seconds.
+# =============================================================================
+# Plymouth theme quick test: shows the splash for a few seconds.
 #
 # Usage: ./testtheme.sh [--keep] <theme-name> [seconds]   (default: 5 seconds)
+#   Run as a normal user; the script asks for sudo itself.
+#   --keep  leave the theme installed and selected as default afterwards.
 #
-# Restores your previous default theme afterwards.
-# Do not run with sudo: the script calls sudo itself where needed.
+# The previous default theme is restored on exit unless --keep is given.
+# =============================================================================
+set -u
+# shellcheck source=lib/common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+usage() { echo "Usage: $0 [--keep] <theme-name> [seconds]"; }
 
-usage() {
-  echo "Usage: $0 [--keep] <theme-name> [seconds]"
-  echo "  --keep   leave the theme installed and set as default afterwards"
-}
-
-THEME_ARG=""
-SECONDS_ARG=5
-positional=0
-for arg in "$@"; do
-  case "$arg" in
-    --keep) KEEP=1 ;;
-    -h|--help) usage; exit 0 ;;
-    -*) usage; die "Unknown option '$arg'." ;;
-    *)
-      positional=$((positional + 1))
-      if [ "$positional" -eq 1 ]; then THEME_ARG="$arg"; else SECONDS_ARG="$arg"; fi
-      ;;
-  esac
+ARGS=()
+for a in "$@"; do
+    case "$a" in
+        --keep) KEEP=1 ;;
+        -h|--help) usage; exit 0 ;;
+        *) ARGS+=("$a") ;;
+    esac
 done
+{ [ "${#ARGS[@]}" -ge 1 ] && [ "${#ARGS[@]}" -le 2 ]; } || { usage >&2; exit 1; }
 
-[[ $SECONDS_ARG =~ ^[1-9][0-9]*$ ]] || die "Duration must be a positive whole number of seconds."
+SECONDS_TO_SHOW="${ARGS[1]:-5}"
+[[ "$SECONDS_TO_SHOW" =~ ^[0-9]+$ ]] || die "seconds must be a whole number, got '$SECONDS_TO_SHOW'."
 
-need_cmd plymouth
-need_cmd plymouthd
-need_cmd plymouth-set-default-theme
-select_theme "$THEME_ARG"
+ply_need_root "$@"
+ply_check_tools
+ply_select_theme "${ARGS[0]}"
 
-arm_cleanup
-install_theme
-# No initramfs rebuild is needed just for previewing.
-start_daemon
-sleep "$SECONDS_ARG"
-stop_daemon
-echo "Done. Debug log: $LOG_FILE"
+ply_install_theme
+ply_start_daemon ""
+plymouth show-splash
+sleep "$SECONDS_TO_SHOW"
+plymouth quit

@@ -1,100 +1,78 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Plymouth theme full preview (simulated boot flow).
-# Run from anywhere; themes are looked up relative to this script.
+# Plymouth theme full preview: simulates a boot (messages, progress, a password
+# prompt) for a theme from ./themes.
 #
 # Usage: ./preview.sh [--keep] <theme-name>
+#   Run as a normal user; the script asks for sudo itself.
+#   --keep  leave the theme installed and selected as default afterwards.
 #
-# Installs the theme, runs a boot-like sequence (messages, progress, a fake
-# password prompt) and then restores your previous default theme.
-# Do not run with sudo: the script calls sudo itself where needed.
+# The previous default theme is restored on exit unless --keep is given.
 # =============================================================================
+set -u
+# shellcheck source=lib/common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+usage() { echo "Usage: $0 [--keep] <theme-name>"; }
 
-usage() {
-  echo "Usage: $0 [--keep] <theme-name>"
-  echo "  --keep   leave the theme installed and set as default afterwards"
-}
-
-THEME_ARG=""
-for arg in "$@"; do
-  case "$arg" in
-    --keep) KEEP=1 ;;
-    -h|--help) usage; exit 0 ;;
-    -*) usage; die "Unknown option '$arg'." ;;
-    *) THEME_ARG="$arg" ;;
-  esac
+ARGS=()
+for a in "$@"; do
+    case "$a" in
+        --keep) KEEP=1 ;;
+        -h|--help) usage; exit 0 ;;
+        *) ARGS+=("$a") ;;
+    esac
 done
+[ "${#ARGS[@]}" -eq 1 ] || { usage >&2; exit 1; }
 
-need_cmd plymouth
-need_cmd plymouthd
-need_cmd plymouth-set-default-theme
-select_theme "$THEME_ARG"
+ply_need_root "$@"
+ply_check_tools
+ply_select_theme "${ARGS[0]}"
+
+LOG_FILE=/tmp/plymouth-preview.log
+: > "$LOG_FILE"; chmod 644 "$LOG_FILE"
 
 echo "Theme directory : $THEME_SRC"
-echo "Theme name      : $THEME_NAME"
 echo "Installing to   : $THEME_DST"
-echo "Debug log       : $LOG_FILE"
-
-arm_cleanup
-install_theme
-start_daemon
-
-# Send a boot progress value (integer 0-100).
-send_progress() {
-  $SUDO plymouth system-update --progress="$1"
-}
-
-# ---- Phase 1: early boot (0% -> 30%) ----------------------------------------
-$SUDO plymouth message --text="Starting early boot services..."
-sleep 0.3
-for pct in 5 10 15 20 25 30; do
-  send_progress "$pct"
-  sleep 0.2
-done
-$SUDO plymouth message --text="Encrypted volume found..."
-sleep 0.4
-
-# ---- Phase 2: password prompt -----------------------------------------------
-# This triggers the theme's password callback. We show it for two seconds and
-# then cancel it. Do not type a real passphrase: the answer is written to a
-# temporary file (removed afterwards).
-pw_out="$(mktemp)"
-$SUDO plymouth ask-for-password --prompt="Enter passphrase for /dev/sda2:" >"$pw_out" &
-ask_pid=$!
-sleep 2
-$SUDO kill "$ask_pid" 2>/dev/null
-wait "$ask_pid" 2>/dev/null
-rm -f "$pw_out"
-sleep 0.3
-
-$SUDO plymouth message --text="Passphrase accepted. Mounting volumes..."
-sleep 0.3
-
-# ---- Phase 3: post-password progress (30% -> 100%) --------------------------
-for pct in 40 50 60; do
-  send_progress "$pct"
-  sleep 0.2
-done
-$SUDO plymouth message --text="Mounting /home..."
-sleep 0.3
-$SUDO plymouth hide-message --text="Mounting /home..."
-for pct in 70 80 90 100; do
-  send_progress "$pct"
-  sleep 0.2
-done
-$SUDO plymouth message --text="Boot complete."
+ply_install_theme
+ply_start_daemon "$LOG_FILE"
+plymouth show-splash
 sleep 0.5
 
-# ---- Quit and summarize -----------------------------------------------------
-stop_daemon
+send_progress() { plymouth system-update --progress="$1"; }
 
-echo
-echo "=== Plymouth debug log (errors and warnings, first 30 lines) ==="
-if [ -f "$LOG_FILE" ]; then
-  grep -iE "error|failed|cannot|warning" "$LOG_FILE" | head -30
-  echo "(full log: $LOG_FILE)"
-else
-  echo "Log file not found."
-fi
+# ---- Phase 1: early boot (0-30%) --------------------------------------------
+plymouth message --text="Starting early boot services..."
+sleep 0.3
+for pct in 5 10 15 20 25 30; do send_progress "$pct"; sleep 0.2; done
+plymouth message --text="Encrypted volume found..."
+sleep 0.4
+
+# ---- Phase 2: password prompt -------------------------------------------------
+# This triggers the theme's password callback. The prompt is cancelled after a
+# couple of seconds and its output discarded; never type a real passphrase here.
+plymouth ask-for-password --prompt="Enter passphrase for /dev/sda2:" >/dev/null 2>&1 &
+ask_pid=$!
+sleep 2
+kill "$ask_pid" 2>/dev/null || true
+wait "$ask_pid" 2>/dev/null || true
+sleep 0.3
+plymouth message --text="Passphrase accepted. Mounting volumes..."
+sleep 0.3
+
+# ---- Phase 3: post-password progress (40-100%) ---------------------------------
+for pct in 40 50 60; do send_progress "$pct"; sleep 0.2; done
+plymouth message --text="Mounting /home..."
+sleep 0.3
+plymouth hide-message --text="Mounting /home..."
+for pct in 70 80 90 100; do send_progress "$pct"; sleep 0.2; done
+plymouth message --text="Boot complete."
+sleep 0.5
+
+plymouth quit
+sleep 0.3
+
+echo ""
+echo "=== Plymouth debug log: problems (full log: $LOG_FILE) ==="
+grep -iE "error|fail|cannot|warn" "$LOG_FILE" | head -30 || true
+echo "(end)"
