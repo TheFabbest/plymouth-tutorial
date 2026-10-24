@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=randomsentence
+Description=Picks a random sentence and displays it on the screen.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/randomsentence/images
+ScriptFile=/usr/share/plymouth/themes/randomsentence/randomsentence.script

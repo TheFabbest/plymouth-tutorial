@@ -1,0 +1,63 @@
+# ==========================================
+# Theme Name: Pet the Dog
+# Description: A dog that can be petted by pressing any key.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# - Interactive: Yes (press any key to pet the dog)
+# ========================================== 
+
+pet_count = 0;
+
+dog_sprite = Sprite();
+
+images = [];
+num_of_frames = 13;
+for (i = 1; i <= num_of_frames; i++) {
+    images[i-1] = Image(i + ".png");
+}
+
+current_frame = 0;
+dog_sprite.SetPosition((Window.GetWidth() - images[0].GetWidth()) / 2, (Window.GetHeight() - images[0].GetHeight()) / 2, 1000);
+dog_sprite.SetImage(images[0]);
+
+# debug
+debug_sprite = Sprite();
+fun write(text)
+{
+  text_image = Image.Text(text, 1, 1, 1, 1, "Sans 40");
+  debug_sprite.SetImage(text_image);
+  debug_sprite.SetPosition((Window.GetWidth() - text_image.GetWidth()) / 2, Window.GetHeight() - 150, 10000);
+}
+
+fun pet() {
+    pet_count++;
+    current_frame = 1;
+}
+
+fun update() {
+  if (current_frame > 0) {
+    current_frame = (current_frame + 1);
+
+    if (current_frame == 13) {
+      current_frame = 0;
+    }
+  }
+  dog_sprite.SetImage(images[current_frame]);
+}
+
+fun keyboard_callback(){
+  pet();
+}
+
+Plymouth.SetKeyboardInputFunction(keyboard_callback);
+
+fun refresh_callback() {
+  write("Pet count: " + pet_count);
+  update();
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

@@ -1,0 +1,61 @@
+# ==========================================
+# Theme Name: randomsentence
+# Description: Displays a random sentence on a solid background.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: No
+# ========================================== 
+
+sentences = [
+    "Hello World!",
+    "My objective function is silliness.",
+    "Slow down, take your time.",
+    "No child would build a datacenter with sand.",
+    "Substainable, safe, functional, secure, fun.",
+    "Uninstall all socials.",
+    "Remember to do that thing.",
+    "Live your life, or die.",
+    "We need happy people more than anything else.",
+    "Money is not happiness.",
+    "Go watch a movie.",
+    "Remember to pet your dog.",
+    "Is the anniversary close?",
+    "Do something great today.",
+    "Go and fix that thing.",
+    "Text that old friend, they miss you too.",
+    "Improve.",
+    "Don't be sorry, be better.",
+    "Have fun!",
+    "I hope this theme makes your days better.",
+    "All these quotes are handwritten by me and noone else by the way.",
+    "Text your partner, let them know you think of them.",
+    ":D\nHehe, made your pixels smile.",
+    "Knowledge is everything.",
+    "Behind you.",
+    "72 times 3?",
+    "Get a plant.",
+    "I hope this boot screen finds you well.",
+    "Eat better.",
+    "The fastest learners are often the people least afraid of looking dumb.\n@itsmonkiddo",
+    "Go plant a tree!",
+    "I hope the things you're doing are not evil things.",
+    "Where are the bugs? Are they safe? Are they alright?",
+    "Can you still do pushups?",
+    "I am proud of you.",
+    "Make beautiful things.",
+    "Believe it or not, suffering makes everything beautiful.",
+    "Did you remember to smile today?",
+];
+
+for (size = 0; sentences[size] != NULL; size = size + 1){}
+
+index = Math.Int(Math.Random() * size);
+sentence = sentences[index];
+
+image = Image.Text(sentence, 1, 1, 1, 1, "Monospace 28");
+sprite = Sprite();
+sprite.SetImage(image);
+sprite.SetPosition(Math.Int((Window.GetWidth() - image.GetWidth()) / 2), Math.Int((Window.GetHeight() - image.GetHeight()) / 2));

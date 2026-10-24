@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=fullscreenimage
+Description=A simple Plymouth theme that shows a fullscreen image on the screen.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/fullscreenimage/images
+ScriptFile=/usr/share/plymouth/themes/fullscreenimage/fullscreenimage.script

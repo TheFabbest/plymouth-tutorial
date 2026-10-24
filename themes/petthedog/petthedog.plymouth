@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=PetTheDog
+Description=Press any key to pet the dog
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/petthedog/images
+ScriptFile=/usr/share/plymouth/themes/petthedog/petthedog.script

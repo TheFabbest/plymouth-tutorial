@@ -1,0 +1,50 @@
+# ==========================================
+# Theme Name: loading-animation
+# Description: Shows an animated loading animation during boot, of which the progress is dictated by the progress of the boot process.
+# Author: TheFabbest
+# Credits: Original GIF by Badwolf5940 (Creative Commons)
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: No
+# - Progress Display: Indicates progress by advancing the animation
+# ========================================== 
+
+# set a background color gradient
+Window.SetBackgroundTopColor(0,0,0);
+Window.SetBackgroundBottomColor(0,0,0);
+
+# initialize the animation
+frame = 0;
+target_frame = 0;
+shown = Sprite();
+first_frame = Image("frame0.png");
+shown.SetImage(first_frame);
+shown.SetPosition(Math.Int((Window.GetWidth() - first_frame.GetWidth()) / 2), Math.Int((Window.GetHeight() - first_frame.GetHeight()) / 2), 1);
+last_frame = 83; # hardcoded number of last frame in the animation
+
+# credits text (Badwolf5940)
+credits = Image.Text("Original GIF by Badwolf5940 (CC)",  1, 1, 1, 1, "Monospace 9");
+credits_sprite = Sprite();
+credits_sprite.SetImage(credits);
+credits_sprite.SetPosition(Math.Int(Window.GetWidth() / 2) + 10, Math.Int((Window.GetHeight() + first_frame.GetHeight()) / 2) + 10);
+
+
+fun progress_callback (duration, progress)
+{
+  # calculate the target frame based on the progress, overshooting a bit to ensure we reach the last frame
+  target_frame = Math.Min(Math.Int(progress * 1.05 * last_frame), last_frame);
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+
+fun refresh_callback ()
+{
+  if (target_frame > frame)
+  {
+    frame = frame + 1;
+    shown.SetImage(Image("frame" + frame + ".png"));
+  }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

@@ -1,8 +1,17 @@
-# This is a simple Plymouth script that demonstrates how to use the various callback functions provided by the Plymouth API.
+# ==========================================
+# Theme Name: full-featured
+# Description: Demonstrates how to use the various callback functions provided by the Plymouth API.
+# Author: TheFabbest
+#
+# Features:
+# - Multi-Screen Support: Works, but only first screen is used (defaults to monitor 0)
+# - Password Prompt Support: Yes
+# - Progress Display: Yes
+# ========================================== 
 
 # some common global constants
 PAD_Y = Window.GetHeight() / 10;
-PAD_X = 10;
+PAD_X = 20;
 NORMAL = 0;
 PASSWORD = 1;
 
@@ -10,8 +19,8 @@ PASSWORD = 1;
 theme_state = NORMAL;
 
 # set a background color gradient
-Window.SetBackgroundTopColor(0.2, 0.2, 0.2);     // top color
-Window.SetBackgroundBottomColor(0, 0, 0); // bottom color
+Window.SetBackgroundTopColor(0.5,0.5,1);
+Window.SetBackgroundBottomColor(0,0,0);
 
 
 # ------------------------- Refresh Callback --------------------------------
@@ -57,15 +66,15 @@ Plymouth.SetRefreshFunction (refresh_callback);
 
 #------------------------- Normal/Password Callback --------------------------------
 
-prompt_image = Sprite();
-bullets_image = Sprite();
+prompt_sprite = Sprite();
+bullets_sprite = Sprite();
 
 # this will be called when Plymouth wants to go back to the normal mode
 fun display_normal_callback ()
   {
     theme_state = NORMAL;
-    prompt_image.SetImage(null);
-    bullets_image.SetImage(null);
+    prompt_sprite.SetImage(NULL);
+    bullets_sprite.SetImage(NULL);
   }
 
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
@@ -74,14 +83,21 @@ Plymouth.SetDisplayNormalFunction(display_normal_callback);
 fun display_password_callback (prompt, bullets)
   {
     theme_state = PASSWORD;
-    prompt_image.SetImage(Image.Text(prompt, 1, 1, 1));
+
+    prompt_image = Image.Text(prompt, 1, 1, 1);
+    prompt_sprite.SetImage(prompt_image);
     bullet_str = "";
     i = 0;
-    while (i < bullets) { bullet_str = bullet_str + "*"; i = i + 1; }
-    bullets_image.SetImage(Image.Text(bullet_str, 1, 1, 1));
+    while (i < bullets)
+    {
+      bullet_str = bullet_str + "*";
+      i = i + 1;
+    }
+    bullets_image = Image.Text(bullet_str, 1, 1, 1);
+    bullets_sprite.SetImage(bullets_image);
     # center
-    prompt_image.SetPosition(Window.GetWidth() / 2 - prompt_image.GetWidth() / 2, Window.GetHeight() / 3, 10000);
-    bullets_image.SetPosition(Window.GetWidth() / 2 - bullets_image.GetWidth() / 2, Window.GetHeight() / 2, 10000);
+    prompt_sprite.SetPosition((Window.GetWidth() - prompt_image.GetWidth()) / 2, Window.GetHeight() / 2 - bullets_image.GetHeight() - prompt_image.GetHeight(), 10000);
+    bullets_sprite.SetPosition((Window.GetWidth() - bullets_image.GetWidth()) / 2, Window.GetHeight() / 2, 10000);
   }
 
 Plymouth.SetDisplayPasswordFunction(display_password_callback);
@@ -91,10 +107,15 @@ Plymouth.SetDisplayPasswordFunction(display_password_callback);
 
 progress_image = Sprite();
 progress_image.SetPosition(PAD_X, PAD_Y * 3, 10000);
+last = -1;
 fun progress_callback (duration, progress)
   {
-    image = Image.Text("Progress: " + Math.Int(progress * 100) + "%", 1, 1, 1);
-    progress_image.SetImage(image);
+    if (progress != last)
+    {
+      last = progress;
+      image = Image.Text("Progress: " + Math.Int(progress * 100) + "%", 1, 1, 1);
+      progress_image.SetImage(image);
+    }
   }
 
 Plymouth.SetBootProgressFunction(progress_callback);
@@ -112,25 +133,27 @@ Plymouth.SetQuitFunction(quit_callback);
 #----------------------------------------- Message --------------------------------
 
 # array of images
+NUM_OF_MESSAGES = 3;
 message_sprites = [Sprite(), Sprite(), Sprite()];
 message_texts = ["", "", ""];
-pad = PAD_Y * 5;
-current_image = 0;
-while (current_image < message_sprites.length)
-  {
-    message_sprites[current_image].SetPosition(PAD_X, pad, 10000);
-    pad = pad + PAD_Y;
-    current_image = current_image + 1;
-  }
+
+i = 0;
+while (i < NUM_OF_MESSAGES)
+{
+    message_sprites[i].SetPosition(PAD_X, Window.GetHeight() - 50 - (i * 25), 10000);
+    i = i + 1;
+}
 
 # this will be called when Plymouth wants to display a message on the screen. it is shown regardless of the current mode
 fun display_message_callback (text)
 {
-  message_sprites[2].SetImage(message_sprites[1].GetImage());
-  message_texts[2] = message_texts[1];
-  message_sprites[1].SetImage(message_sprites[0].GetImage());
-  message_texts[1] = message_texts[0];
-
+  curr_message = NUM_OF_MESSAGES - 1;
+  while (curr_message > 0)
+  {
+    message_texts[curr_message] = message_texts[curr_message - 1];
+    message_sprites[curr_message].SetImage(message_sprites[curr_message - 1].GetImage());
+    curr_message = curr_message - 1;
+  }
   message_sprites[0].SetImage(Image.Text(text, 0.8, 0.8, 1));
   message_texts[0] = text;
 }
@@ -140,7 +163,7 @@ fun display_message_callback (text)
 fun hide_message_callback(text)
 {
     i = 0;
-    while (i < message_texts.length)
+    while (i < NUM_OF_MESSAGES)
     {
         if (message_texts[i] == text)
         {
@@ -152,7 +175,7 @@ fun hide_message_callback(text)
                 message_texts[j] = message_texts[j-1];
                 j = j - 1;
             }
-            message_sprites[0].SetImage(null);
+            message_sprites[0].SetImage(NULL);
             message_texts[0] = "";
             break;
         }
