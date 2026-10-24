@@ -80,6 +80,13 @@ This draws a centered image on a black background; the `centeredimage` theme is 
 
 The paths in the `.plymouth` file point at the installed location, so the theme's folder name must match the name used in `ImageDir` and `ScriptFile`.
 
+## Quick facts
+
+- Plymouth is a boot animation system for Linux.
+- Themes are defined in `.plymouth` files and implemented in `.script` files.
+- The script language is a simple imperative language focusing on event-driven programming.
+- The calculation of progress is very approximate and often affected by past booting times, so a theme may appear to jump or skip frames if the boot is unusually fast or slow even if progress is used correctly.
+
 ## Repository structure
 
 ```text

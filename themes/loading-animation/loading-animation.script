@@ -22,6 +22,12 @@ shown.SetImage(first_frame);
 shown.SetPosition(Math.Int((Window.GetWidth() - first_frame.GetWidth()) / 2), Math.Int((Window.GetHeight() - first_frame.GetHeight()) / 2), 1);
 last_frame = 83; # hardcoded number of last frame in the animation
 
+# credits text (Badwolf5940)
+credits = Image.Text("Original GIF by Badwolf5940 (CC)",  1, 1, 1, 1, "Monospace 9");
+credits_sprite = Sprite();
+credits_sprite.SetImage(credits);
+credits_sprite.SetPosition(Math.Int(Window.GetWidth() / 2) + 10, Math.Int((Window.GetHeight() + first_frame.GetHeight()) / 2) + 10);
+
 
 fun progress_callback (duration, progress)
 {

@@ -1,6 +1,6 @@
 # ==========================================
 # Theme Name: fullscreenimage
-# Description: Displays a single fullscreen image.
+# Description: Displays a single fullscreen image. Keeps the aspect ratio of the image and centers it on the screen.
 # Author: TheFabbest
 #
 # Features:
@@ -15,9 +15,16 @@ img = Image("image.png");
 # scale image
 W = Window.GetWidth();
 H = Window.GetHeight();
-scaled_img = img.Scale(W, H);
+
+# find smallest scale factor to fit image in window
+scale_factor = Math.Min(W / img.GetWidth(), H / img.GetHeight());
+scaled_img = img.Scale(Math.Int(scale_factor * img.GetWidth()), Math.Int(scale_factor * img.GetHeight()));
 
 # create sprite and set image
 sprite = Sprite();
 sprite.SetImage(scaled_img);
-sprite.SetPosition(0, 0, 1);
+
+# position sprite in center of window
+center_x = Math.Int((W - scaled_img.GetWidth()) / 2);
+center_y = Math.Int((H - scaled_img.GetHeight()) / 2);
+sprite.SetPosition(center_x, center_y, 1);

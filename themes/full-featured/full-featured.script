@@ -19,7 +19,7 @@ PASSWORD = 1;
 theme_state = NORMAL;
 
 # set a background color gradient
-Window.SetBackgroundTopColor(1,1,1);
+Window.SetBackgroundTopColor(0.5,0.5,1);
 Window.SetBackgroundBottomColor(0,0,0);
 
 
@@ -73,8 +73,8 @@ bullets_sprite = Sprite();
 fun display_normal_callback ()
   {
     theme_state = NORMAL;
-    prompt_sprite.SetImage(null);
-    bullets_sprite.SetImage(null);
+    prompt_sprite.SetImage(NULL);
+    bullets_sprite.SetImage(NULL);
   }
 
 Plymouth.SetDisplayNormalFunction(display_normal_callback);
@@ -175,7 +175,7 @@ fun hide_message_callback(text)
                 message_texts[j] = message_texts[j-1];
                 j = j - 1;
             }
-            message_sprites[0].SetImage(null);
+            message_sprites[0].SetImage(NULL);
             message_texts[0] = "";
             break;
         }

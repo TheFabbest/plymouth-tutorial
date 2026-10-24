@@ -6,6 +6,3 @@ ModuleName=script
 [script]
 ImageDir=/usr/share/plymouth/themes/full-featured/images
 ScriptFile=/usr/share/plymouth/themes/full-featured/full-featured.script
-
-[script-env-vars]
-textt=Fab is the best!

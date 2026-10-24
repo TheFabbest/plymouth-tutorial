@@ -50,12 +50,12 @@ sentences = [
     "Did you remember to smile today?",
 ];
 
-for (size = 0; sentences[size] != null; size = size + 1){}
+for (size = 0; sentences[size] != NULL; size = size + 1){}
 
 index = Math.Int(Math.Random() * size);
 sentence = sentences[index];
 
-image = Image.Text(sentence, 1, 1, 1, 1, "Monospace 28", "center");
+image = Image.Text(sentence, 1, 1, 1, 1, "Monospace 28");
 sprite = Sprite();
 sprite.SetImage(image);
-sprite.SetPosition((Window.GetWidth() - image.GetWidth()) / 2, (Window.GetHeight() - image.GetHeight()) / 2);
+sprite.SetPosition(Math.Int((Window.GetWidth() - image.GetWidth()) / 2), Math.Int((Window.GetHeight() - image.GetHeight()) / 2));
