@@ -26,6 +26,10 @@ window_height = Window.GetHeight();
 i = 0;
 while (i < MAX_FRAME) {
     loaded = Image("frame" + i + ".png");
+    if (loaded == NULL) {
+        MAX_FRAME = i;
+        break;
+    }
     frames[i] = loaded.Scale(loaded.GetWidth() * 4, loaded.GetHeight() * 4);
 
     w = frames[i].GetWidth();
