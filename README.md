@@ -288,6 +288,6 @@ To submit a theme:
 3. Add a row to the table above.
 4. Check that `./testtheme.sh <name> 5` works, and say what you tested on.
 
-## Copyright
-Some used images are under Creative Commons licenses, in that case credits are shown.
-Some other images were a gentle contribution from @la_scign_art origianlly commissioned by Pet the Dog.
+## Credits
+Most of the assets are from [la_scign_art](https://www.instagram.com/la_scign_art/), commissioned by [Pet the Dog](https://steamcommunity.com/groups/petthedogs).
+Some other used assets are under Creative Commons licenses, credits are shown in that case.
