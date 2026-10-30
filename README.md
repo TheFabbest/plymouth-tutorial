@@ -32,6 +32,7 @@ The focus is on the Plymouth scripting language itself: callbacks, sprite/image 
 
 - `plymouth` and the script plugin (the package is often named `plymouth-plugin-script`, or is bundled with `plymouth`). Themes that declare `ModuleName=script` need it.
 - `bash` and `sudo`. All scripts are bash; nothing else (such as fish) is required.
+- `plymouth-set-default-theme` is **optional**. Some distributions (reported on a fresh Ubuntu VM with `plymouth` and `plymouth-themes` installed) do not ship it. Without it, the preview scripts select the theme through `/etc/plymouth/plymouthd.conf` instead (see [Scripts in this repo](#scripts-in-this-repo)).
 - `systemd`, for the boot-delay and key-wait helpers only.
 - A virtual machine is recommended for testing (see [Safer testing options](#safer-testing-options)).
 
@@ -124,6 +125,8 @@ Run `preview.sh` and `testtheme.sh` **as a normal user, from any directory**. Th
 
 Both scripts leave your system as they found it: when they finish, or when you press Ctrl+C, they stop `plymouthd`, remove the installed copy of the theme, and restore your previous default theme. If a theme with the same name was already installed, it is backed up first and put back afterwards. Add `--keep` to leave the theme installed and selected instead.
 
+**Systems without `plymouth-set-default-theme`:** the scripts print a notice and set `Theme=<name>` in `/etc/plymouth/plymouthd.conf`, which `plymouthd` reads when it starts. An existing file is backed up and put back unchanged afterwards; if there was none, the file is deleted again. If the configuration cannot be written, or the theme cannot be copied, the script stops with an error. With `--keep`, the file is left with the new `Theme=` line. Neither the preview nor the fallback rebuilds the initramfs; that is only needed for a real boot (see [Manual theme installation](#manual-theme-installation)).
+
 ### `preview.sh`
 
 ```bash
@@ -146,7 +149,7 @@ Use it for realistic testing when you want to observe a theme across a boot-like
 > - Plymouth takes over the display while it runs, so you may get the best view from a text console or a VM rather than inside a running desktop session.
 > - The test environment is not a real boot: some themes may not react to the simulated progress the way they would at boot.
 > - The fake passphrase prompt is cancelled automatically and its output is discarded. Never type a real passphrase into it.
-> - The temporary change to your default theme is undone automatically, but only if the script can exit normally. After a hard kill (`kill -9`) or a power loss, run `sudo plymouth quit` and restore your theme with `sudo plymouth-set-default-theme <previous-theme>`. The script prints the previous theme's name when it starts.
+> - The temporary change to your default theme is undone automatically, but only if the script can exit normally. After a hard kill (`kill -9`) or a power loss, run `sudo plymouth quit` and restore your theme with `sudo plymouth-set-default-theme <previous-theme>`. The script prints the previous theme's name when it starts. Without that command, set `Theme=` in `/etc/plymouth/plymouthd.conf` back to the previous name (or delete the file if you never had one).
 
 ### `testtheme.sh`
 
@@ -195,6 +198,14 @@ sudo update-initramfs -u    # or the equivalent for your distribution
 ```
 
 You may also have a graphical tool installed to set the theme.
+
+If `plymouth-set-default-theme` is not available, set the theme by hand in `/etc/plymouth/plymouthd.conf` (create the file if it does not exist), then rebuild the initramfs with the command for your distribution from the table above:
+
+```ini
+[Daemon]
+Theme=mytheme
+ShowDelay=0
+```
 
 ## Boot-delay and key-wait helpers
 
@@ -255,6 +266,8 @@ The themes under `themes/` are example implementations that show different patte
 | Disk-encryption passphrase prompt missing | The theme must implement the password/question callbacks (see `full-featured`). |
 | Images don't show | Check `ImageDir` and file names (paths are case-sensitive). |
 | Splash stuck after a hard-killed preview | `sudo plymouth quit`, then restore your theme (see the notes under `preview.sh`). |
+| Splash goes black part-way through a long boot delay | Most likely due to the virtual machine itself. Check the VM's graphics controller setting, try another hypervisor or real hardware, and compare with a stock theme. If it only happens with one theme, read that theme's script for logic that stops drawing. |
+| `plymouth-set-default-theme` not found | Not an error: the scripts fall back to `/etc/plymouth/plymouthd.conf` (see [Scripts in this repo](#scripts-in-this-repo)). To make a theme permanent, use the manual steps under [Manual theme installation](#manual-theme-installation). |
 | Boot hangs on the splash | A key-wait service is probably enabled; see the recovery steps under [Boot-delay and key-wait helpers](#boot-delay-and-key-wait-helpers). |
 
 ## Useful external resources
